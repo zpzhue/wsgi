@@ -4,15 +4,15 @@ from webob.dec import wsgify
 from collections import namedtuple
 import re
 
-Router = namedtuple('Router', ['pattern', 'method', 'handler'])
+Router = namedtuple('Router', ['pattern', 'methods', 'handler'])
 
 
-class Application
+class Application:
     def __init__(self):
         self.routes = []
 
-    def _router(self, pattern, method, handler):
-        self.routes.append(Router(pattern, method, handler))
+    def _router(self, pattern, methods, handler):
+        self.routes.append(Router(pattern, methods, handler))
 
     def route(self, pattern, methods=None):
         if methods is None:
@@ -29,7 +29,6 @@ class Application
             if request.method in route.methods:
                 if re.match(route.pattern, request.path):
                     return route.handler(request)
-
 
 
 app = Application()
@@ -49,10 +48,16 @@ def hello(request):
 
 @app.route(r'/favicon.ico')
 def favicon(requset):
-    with open('./favicon.ico', 'rb') as f:
+    with open('./148.jpg', 'rb') as f:
         resp = Response(body=f.read(), content_type= 'image/x-icon')
         return resp
 
+
+@app.route(r'/148.jpg$')
+def jpg(request):
+    with open('./148.jpg', 'rb') as f:
+        resp = Response(body=f.read(), content_type= 'image/jpg')
+        return resp
 
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
